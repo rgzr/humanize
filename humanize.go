@@ -3,6 +3,7 @@ package humanize
 import (
 	"fmt"
 	"math"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -50,4 +51,40 @@ func Bytes(s uint64) string {
 
 func logn(n, b float64) float64 {
 	return math.Log(n) / math.Log(b)
+}
+
+func stripTrailingZeros(s string) string {
+	if !strings.ContainsRune(s, '.') {
+		return s
+	}
+	offset := len(s) - 1
+	for offset > 0 {
+		if s[offset] == '.' {
+			offset--
+			break
+		}
+		if s[offset] != '0' {
+			break
+		}
+		offset--
+	}
+	return s[:offset+1]
+}
+
+func stripTrailingDigits(s string, digits int) string {
+	if i := strings.Index(s, "."); i >= 0 {
+		if digits <= 0 {
+			return s[:i]
+		}
+		i++
+		if i+digits >= len(s) {
+			return s
+		}
+		return s[:i+digits]
+	}
+	return s
+}
+
+func Float(num float64, digits int) string {
+	return stripTrailingZeros(stripTrailingDigits(strconv.FormatFloat(num, 'f', 6, 64), digits))
 }
