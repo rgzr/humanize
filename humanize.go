@@ -15,7 +15,8 @@ const (
 
 var byteSizes = []string{"B", "kB", "MB", "GB", "TB", "PB", "EB"}
 
-func Duration(d time.Duration) string {
+func DurationSeconds(d time.Duration) string {
+	d = d.Truncate(time.Second)
 	if d < day {
 		return d.String()
 	}
